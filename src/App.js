@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useImperativeHandle } from 'react';
 import './App.css';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, NavLink } from 'react-router-dom';
 import { DatePicker, message, Layout, Icon, Menu, Button, Modal, Input, InputNumber } from 'antd';
 import 'antd/dist/antd.css';
 import HomeScreen from './pages/HomeScreen';
 import Categories from './pages/Categories';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp'
 import Post from './pages/Post';
 
 import './pages/HomeScreen.css'
@@ -47,6 +49,33 @@ class App extends React.Component {
     window.location.href = `http://localhost:3000/categories/${this.state.categories}&${event.item.props.children}`;
   }
 
+  handleLogOut = () => {
+    fetch("http://localhost:3001/users/logout", {
+      credentials: "include",
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(data => {
+        window.localStorage.removeItem("email");
+        window.localStorage.removeItem("fullName");
+        this.setState({
+          currentUser: {
+            email: "",
+            fullName: ""
+          }
+        });
+        window.location.href = "/login";
+      })
+      .catch(error => {
+        if (error) {
+          console.log(error);
+          window.alert(error.message);
+        }
+      });
+  };
+
   render() {
     const { visible, confirmLoading, ModalText } = this.state;
     return (
@@ -84,7 +113,8 @@ class App extends React.Component {
                 <Menu.Item onClick={this.selectCategories} key="14">Food and Drink</Menu.Item>
                 <Menu.Item onClick={this.selectCategories} key="15">Architecture</Menu.Item>
               </SubMenu>
-              <SubMenu
+              {window.location.href==='http://localhost:3000/'?
+                <SubMenu
                 key="sub1"
                 title={
                   <span>
@@ -94,8 +124,11 @@ class App extends React.Component {
                 }
               >
                 <Menu.Item key="3">Info</Menu.Item>
-                <Menu.Item key="4">Logout</Menu.Item>
-              </SubMenu>
+                <Menu.Item key="4" onClick={this.handleLogOut}>Logout</Menu.Item>
+              </SubMenu> : null
+              }
+              
+
               <SubMenu
                 key="sub2"
                 title={
@@ -122,6 +155,8 @@ class App extends React.Component {
               <BrowserRouter>
                 <Route path='/' exact={true} component={HomeScreen} />
                 <Route path='/categories' component={Categories} />
+                <Route path='/sign-up' exact={true} component={SignUp}/>
+                <Route path='/login' exact={true} component={SignIn}/>
               </BrowserRouter>
             </Content>
             <Footer style={{ textAlign: 'center' }}>PhotoRaw ©2019</Footer>
