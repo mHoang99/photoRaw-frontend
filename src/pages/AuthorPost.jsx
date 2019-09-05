@@ -1,20 +1,28 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Pagination, Card, Icon, Avatar, Modal, Button } from "antd";
 const { Meta } = Card;
 
-class HomeScreen extends React.Component {
+class AuthorPost extends React.Component {
   state = {
     currentUser: {},
     imgSrc: "",
     imgFile: "",
     errorMessage: "",
-    categories: "all",
-    color: "all",
+    id: window.location.href
+      .split("/")
+      [window.location.href.split("/").length - 1].split("&")[0],
     pageNumber: 1,
     pageSize: 12,
     total: 0,
     data: []
+  };
+
+  handleOpenPost = (event, index) => {
+    event.preventDefault();
+    console.log(index);
+    let id = this.state.data[index]._id;
+    console.log(id);
+    window.location.href = `http://localhost:3000/posts/${id}`;
   };
 
   componentWillMount() {
@@ -66,12 +74,12 @@ class HomeScreen extends React.Component {
               }
             });
         } else if (data.data) {
-          this.setState({
-            currentUser: {
-              email: data.data.email,
-              fullName: data.data.fullName
-            }
-          });
+            this.setState({
+                currentUser: {
+                  email: data.data.email,
+                  fullName: data.data.fullName
+                }
+              });
           console.log("Logged in");
           //this.pageRender();
         }
@@ -93,7 +101,7 @@ class HomeScreen extends React.Component {
     });
 
     fetch(
-      `http://localhost:3001/posts?pageNumber=${event.target.innerText}
+      `http://localhost:3001/posts/id?id=${this.state.id}&pageNumber=${event.target.innerText}
     &pageSize=${this.state.pageSize}`,
       {
         credentials: "include",
@@ -129,7 +137,7 @@ class HomeScreen extends React.Component {
       });
 
       fetch(
-        `http://localhost:3001/posts?pageNumber=${tmp}
+        `http://localhost:3001/posts/id?id=${this.state.id}&pageNumber=${tmp}
       &pageSize=${this.state.pageSize}`,
         {
           credentials: "include",
@@ -143,6 +151,7 @@ class HomeScreen extends React.Component {
           console.log(data);
           this.setState({ total: data.total });
           this.pageRender();
+          
         })
         .catch(err => {
           if (err) {
@@ -163,7 +172,7 @@ class HomeScreen extends React.Component {
       });
 
       fetch(
-        `http://localhost:3001/posts?pageNumber=${tmp}
+        `http://localhost:3001/posts/id?id=${this.state.id}&pageNumber=${tmp}
       &pageSize=${this.state.pageSize}`,
         {
           credentials: "include",
@@ -187,17 +196,10 @@ class HomeScreen extends React.Component {
     }
   };
 
-  handleOpenPost = (event, index) => {
-    event.preventDefault();
-    console.log(index);
-    let id = this.state.data[index]._id;
-    console.log(id);
-    window.location.href = `http://localhost:3000/posts/${id}`;
-  };
-
   pageRender = () => {
+    console.log(this.state.categories, this.state.color);
     fetch(
-      `http://localhost:3001/posts?categories=${this.state.categories}&color=${this.state.color}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
+      `http://localhost:3001/posts/id?id=${this.state.id}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
       {
         method: "GET",
         credentials: "include"
@@ -218,7 +220,6 @@ class HomeScreen extends React.Component {
       });
   };
 
-  //<div className="row" style={{}}> can them
   render() {
     return (
       <div className="content">
@@ -226,23 +227,25 @@ class HomeScreen extends React.Component {
           <div className="col-lg-3 col-md-6 col-12">
             {this.state.data.map((post, index) => {
               if (index % 4 === 0) {
-                let tmp = "/posts/" + post._id;
-                console.log(tmp);
                 return (
                   <Card
                     hoverable
-                    id={post._id}
+                    onClick={event => {
+                      this.handleOpenPost(event, index);
+                    }}
                     style={{ margin: "auto", marginTop: "20px", padding: 0 }}
+                    //style={{ width: 300 }}
                     cover={
                       <img
-                        onClick={event => {
-                          this.handleOpenPost(event, index);
-                        }}
                         alt="example"
                         src={this.state.data[index].imageUrl}
                       />
                     }
-                    actions={[<Icon type="heart" key="favourite" />]}
+                    actions={[
+                      <Icon type="setting" key="setting" />,
+                      <Icon type="edit" key="edit" />,
+                      <Icon type="ellipsis" key="ellipsis" />
+                    ]}
                   >
                     <Meta
                       style={{ width: "18rem", height: "auto" }}
@@ -260,23 +263,25 @@ class HomeScreen extends React.Component {
           <div className="col-lg-3 col-md-6 col-12">
             {this.state.data.map((post, index) => {
               if (index % 4 === 2) {
-                let tmp = "/posts/" + post._id;
-                console.log(tmp);
                 return (
                   <Card
                     hoverable
-                    id={post._id}
+                    onClick={event => {
+                      this.handleOpenPost(event, index);
+                    }}
                     style={{ margin: "auto", marginTop: "20px", padding: 0 }}
+                    //style={{ width: 300 }}
                     cover={
                       <img
-                        onClick={event => {
-                          this.handleOpenPost(event, index);
-                        }}
                         alt="example"
                         src={this.state.data[index].imageUrl}
                       />
                     }
-                    actions={[<Icon type="heart" key="favourite" />]}
+                    actions={[
+                      <Icon type="setting" key="setting" />,
+                      <Icon type="edit" key="edit" />,
+                      <Icon type="ellipsis" key="ellipsis" />
+                    ]}
                   >
                     <Meta
                       style={{ width: "18rem", height: "auto" }}
@@ -294,23 +299,26 @@ class HomeScreen extends React.Component {
           <div className="col-lg-3 col-md-6 col-12">
             {this.state.data.map((post, index) => {
               if (index % 4 === 1) {
-                let tmp = "/posts/" + post._id;
-                console.log(tmp);
                 return (
                   <Card
-                    id={post._id}
                     hoverable
+                    onClick={event => {
+                      this.handleOpenPost(event, index);
+                    }}
                     style={{ margin: "auto", marginTop: "20px", padding: 0 }}
+                    //style={{ width: 300 }}
                     cover={
                       <img
-                        onClick={event => {
-                          this.handleOpenPost(event, index);
-                        }}
                         alt="example"
                         src={this.state.data[index].imageUrl}
                       />
                     }
-                    actions={[<Icon type="heart" key="favourite" />]}
+                    
+                    actions={[
+                      <Icon type="setting" key="setting" />,
+                      <Icon type="edit" key="edit" />,
+                      <Icon type="ellipsis" key="ellipsis" />
+                    ]}
                   >
                     <Meta
                       style={{ width: "18rem", height: "auto" }}
@@ -328,25 +336,23 @@ class HomeScreen extends React.Component {
           <div className="col-lg-3 col-md-6 col-12">
             {this.state.data.map((post, index) => {
               if (index % 4 === 3) {
-                let tmp = "/posts/" + post._id;
-                console.log(tmp);
                 return (
                   <Card
                     hoverable
-                    id={post._id}
+                    onClick={event => {
+                      this.handleOpenPost(event, index);
+                    }}
                     style={{ margin: "auto", marginTop: "20px", padding: 0 }}
                     cover={
                       <img
-                        onClick={event => {
-                          this.handleOpenPost(event, index);
-                        }}
                         alt="example"
                         src={this.state.data[index].imageUrl}
                       />
                     }
                     actions={[
-                      <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" key="favourite" />,
-              
+                      <Icon type="setting" key="setting" />,
+                      <Icon type="edit" key="edit" />,
+                      <Icon type="ellipsis" key="ellipsis" />
                     ]}
                   >
                     <Meta
@@ -383,4 +389,4 @@ class HomeScreen extends React.Component {
   }
 }
 
-export default HomeScreen;
+export default AuthorPost;

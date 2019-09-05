@@ -19,6 +19,13 @@ class Categories extends React.Component {
     total: 0,
     data: []
   };
+  handleOpenPost = (event, index) => {
+    event.preventDefault();
+    console.log(index);
+    let id = this.state.data[index]._id;
+    console.log(id);
+    window.location.href = `http://localhost:3000/posts/${id}`;
+  };
 
   componentWillMount() {
     const email = window.localStorage.getItem("email");
@@ -69,6 +76,12 @@ class Categories extends React.Component {
               }
             });
         } else if (data.data) {
+          this.setState({
+            currentUser: {
+              email: data.data.email,
+              fullName: data.data.fullName
+            }
+          });
           console.log("Logged in");
           //this.pageRender();
         }
@@ -90,8 +103,7 @@ class Categories extends React.Component {
     });
 
     fetch(
-      `http://localhost:3001/posts?pageNumber=${event.target.innerText}
-    &pageSize=${this.state.pageSize}`,
+      `http://localhost:3001/posts?categories=${this.state.categories}&color=${this.state.color}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
       {
         credentials: "include",
         method: "GET"
@@ -104,34 +116,6 @@ class Categories extends React.Component {
         console.log(data);
         this.setState({ total: data.total });
         this.pageRender();
-        for (let i = 0; i < data.data.length; i++) {
-          document
-            .querySelector(`#exampleModalLong${data.data[i]._id}`)
-            .addEventListener("click", () => {
-              fetch(`http://localhost:3001/posts/updateViews`, {
-                credentials: "include",
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                  id: data.data[i]._id
-                })
-              })
-                .then(res => {
-                  return res.json();
-                })
-                .then(data => {
-                  console.log("success ", data.success);
-                })
-                .catch(err => {
-                  if (err) {
-                    console.log(err);
-                    window.alert(err.message);
-                  }
-                });
-            });
-        }
       })
       .catch(err => {
         if (err) {
@@ -154,8 +138,7 @@ class Categories extends React.Component {
       });
 
       fetch(
-        `http://localhost:3001/posts?pageNumber=${tmp}
-      &pageSize=${this.state.pageSize}`,
+        `http://localhost:3001/posts?categories=${this.state.categories}&color=${this.state.color}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
         {
           credentials: "include",
           method: "GET"
@@ -168,34 +151,6 @@ class Categories extends React.Component {
           console.log(data);
           this.setState({ total: data.total });
           this.pageRender();
-          for (let i = 0; i < data.data.length; i++) {
-            document
-              .querySelector(`#exampleModalLong${data.data[i]._id}`)
-              .addEventListener("click", () => {
-                fetch(`http://localhost:3001/posts/updateViews`, {
-                  credentials: "include",
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json"
-                  },
-                  body: JSON.stringify({
-                    id: data.data[i]._id
-                  })
-                })
-                  .then(res => {
-                    return res.json();
-                  })
-                  .then(data => {
-                    console.log("success ", data.success);
-                  })
-                  .catch(err => {
-                    if (err) {
-                      console.log(err);
-                      window.alert(err.message);
-                    }
-                  });
-              });
-          }
         })
         .catch(err => {
           if (err) {
@@ -216,8 +171,8 @@ class Categories extends React.Component {
       });
 
       fetch(
-        `http://localhost:3001/posts?pageNumber=${tmp}
-      &pageSize=${this.state.pageSize}`,
+        `http://localhost:3001/posts?categories=${this.state.categories}&color=${this.state.color}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
+
         {
           credentials: "include",
           method: "GET"
@@ -230,34 +185,6 @@ class Categories extends React.Component {
           console.log(data);
           this.setState({ total: data.total });
           this.pageRender();
-          for (let i = 0; i < data.data.length; i++) {
-            document
-              .querySelector(`#exampleModalLong${data.data[i]._id}`)
-              .addEventListener("click", () => {
-                fetch(`http://localhost:3001/posts/updateViews`, {
-                  credentials: "include",
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json"
-                  },
-                  body: JSON.stringify({
-                    id: data.data[i]._id
-                  })
-                })
-                  .then(res => {
-                    return res.json();
-                  })
-                  .then(data => {
-                    console.log("success ", data.success);
-                  })
-                  .catch(err => {
-                    if (err) {
-                      console.log(err);
-                      window.alert(err.message);
-                    }
-                  });
-              });
-          }
         })
         .catch(err => {
           if (err) {
@@ -301,6 +228,10 @@ class Categories extends React.Component {
               if (index % 4 === 0) {
                 return (
                   <Card
+                    hoverable
+                    onClick={event => {
+                      this.handleOpenPost(event, index);
+                    }}
                     style={{ margin: "auto", marginTop: "20px", padding: 0 }}
                     //style={{ width: 300 }}
                     cover={
@@ -333,6 +264,10 @@ class Categories extends React.Component {
               if (index % 4 === 2) {
                 return (
                   <Card
+                    hoverable
+                    onClick={event => {
+                      this.handleOpenPost(event, index);
+                    }}
                     style={{ margin: "auto", marginTop: "20px", padding: 0 }}
                     //style={{ width: 300 }}
                     cover={
@@ -365,6 +300,10 @@ class Categories extends React.Component {
               if (index % 4 === 1) {
                 return (
                   <Card
+                    hoverable
+                    onClick={event => {
+                      this.handleOpenPost(event, index);
+                    }}
                     style={{ margin: "auto", marginTop: "20px", padding: 0 }}
                     //style={{ width: 300 }}
                     cover={
@@ -397,6 +336,10 @@ class Categories extends React.Component {
               if (index % 4 === 3) {
                 return (
                   <Card
+                    hoverable
+                    onClick={event => {
+                      this.handleOpenPost(event, index);
+                    }}
                     style={{ margin: "auto", marginTop: "20px", padding: 0 }}
                     cover={
                       <img

@@ -1,23 +1,6 @@
 import React from "react";
-import {
-  DatePicker,
-  message,
-  Layout,
-  Icon,
-  Menu,
-  Button,
-  Modal,
-  Input,
-  InputNumber,
-  Card,
-  Select,
-  Form
-} from "antd";
+import { Button, Modal, Input } from "antd";
 
-const { Option } = Select;
-const { Meta } = Card;
-const { Header, Footer, Sider, Content } = Layout;
-const { SubMenu } = Menu;
 
 Array.prototype.remove = function() {
   var what,
@@ -99,6 +82,12 @@ class Post extends React.Component {
               }
             });
         } else if (data.data) {
+          this.setState({
+            currentUser: {
+              email: data.data.email,
+              fullName: data.data.fullName
+            }
+          });
           console.log("Logged in");
         }
       })
@@ -319,7 +308,6 @@ class Post extends React.Component {
                 maxLength="500"
               />
             </div>
-
 
             <div className="input-group mb-3">
               <div className="input-group-prepend">
