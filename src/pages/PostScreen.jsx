@@ -17,10 +17,13 @@ import {
   Comment,
   Tooltip,
   Input,
-  Form
+  Form,
+  Typography,
+  Statistic
 } from "antd";
 const { Meta } = Card;
 const { TextArea } = Input;
+const { Title, Paragraph, Text } = Typography;
 
 const pStyle = {
   fontSize: 16,
@@ -217,14 +220,14 @@ class PostScreen extends React.Component {
         return res.json();
       })
       .then(data => {
-        console.log(data);
+        console.log(data.data);
         data.data.map((cmt, index) => {
           this.setState({
             comments: [
               {
                 author: cmt.author.fullName,
                 avatar: cmt.author.avaUrl,
-                content: <p style={{width: "100%"}}>{cmt.content}</p>,
+                content: <p style={{ width: "100%" }}>{cmt.content}</p>,
                 datetime: moment(cmt.createdAt).fromNow()
               },
               ...this.state.comments
@@ -300,7 +303,7 @@ class PostScreen extends React.Component {
           {
             author: this.state.currentUser.fullName,
             avatar: this.state.currentUser.avaUrl,
-            content: <p style={{width: "100%"}}>{this.state.value}</p>,
+            content: <p style={{ width: "100%" }}>{this.state.value}</p>,
             datetime: moment().fromNow()
           },
           ...this.state.comments
@@ -323,45 +326,107 @@ class PostScreen extends React.Component {
     return (
       <div className="container">
         {this.state.data.author ? (
-          <div className="row">
-            <div className="col-lg-8 col-12">
+          <Row type="flex" justify="space-around" style={{ marginTop: "30px" }}>
+            <Col xl={10} span={24} style={{ padding: "30px" }}>
               <img
-                style={{ width: "auto 100%", maxHeight: "90vh",marginBottom:"30px", marginTop:"30px"}}
+                style={{
+                  width: "100%"
+                }}
                 src={this.state.data.imageUrl}
               />
-            </div>
-            <div className="col-lg-4 col-12"></div>
-            <div>
-              <List
-                dataSource={[
-                  {
-                    name: this.state.data.author.fullName
-                  }
-                ]}
-                bordered
-                renderItem={item => (
-                  <List.Item
-                    key={item.id}
-                    actions={[
-                      <a onClick={this.showDrawer} key={`a-${item.id}`}>
-                        View Profile
-                      </a>
-                    ]}
-                  >
-                    <List.Item.Meta
-                      avatar={<Avatar src={this.state.data.author.avaUrl} />}
-                      title={
-                        <a
-                          href={`http://localhost:3000/id/${this.state.data.author._id}`}
-                        >
-                          {item.name}
-                        </a>
-                      }
-                      description="Photograper"
+              <Row gutter={16} style={{ padding: "30px" }}>
+                <Col span={12}>
+                  <Statistic
+                    title="Price (USD)"
+                    value={"$" + this.state.data.price}
+                  />
+                </Col>
+                <Col span={12}>
+                  <form action="http://localhost:3001/pay" method="post">
+                    <input
+                      style={{ backgroundColor: "blue" }}
+                      type="submit"
+                      value="Paypal"
                     />
-                  </List.Item>
-                )}
-              />
+                  </form>
+                  <div id="paypal-button-container"></div>
+                </Col>
+              </Row>
+            </Col>
+            <Col
+              xl={10}
+              span={24}
+              style={{ paddingTop: "30px", padding: "30px" }}
+            >
+              <Row type="flex" justify="space-around">
+                <Typography
+                  style={{ backgroundColor: "#cad6eb", padding: "30px" }}
+                >
+                  <Title>Title</Title>
+                  <Divider />
+                  <Paragraph>
+                    In the process of internal desktop applications development,
+                    many different design specs and implementations would be
+                    involved, which might cause designers and developers
+                    difficulties and duplication and reduce the efficiency of
+                    development.
+                  </Paragraph>
+                </Typography>
+              </Row>
+              <Row
+                Row
+                type="flex"
+                justify="space-around"
+                style={{ paddingTop: "30px" }}
+              >
+                <Col span={24}>
+                  <List
+                    dataSource={[
+                      {
+                        name: this.state.data.author.fullName
+                      }
+                    ]}
+                    bordered
+                    renderItem={item => (
+                      <List.Item
+                        key={item.id}
+                        actions={[
+                          <a onClick={this.showDrawer} key={`a-${item.id}`}>
+                            View Profile
+                          </a>
+                        ]}
+                      >
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar src={this.state.data.author.avaUrl} />
+                          }
+                          title={
+                            <a
+                              href={`http://localhost:3000/id/${this.state.data.author._id}`}
+                            >
+                              {item.name}
+                            </a>
+                          }
+                          description="Photograper"
+                        />
+                      </List.Item>
+                    )}
+                  />
+                </Col>
+              </Row>
+            </Col>
+            <Col xl={4} span={0}></Col>
+
+            <Col
+              xl={20}
+              span={24}
+              style={{ paddingLeft: "30px", paddingRight: "30px" }}
+            >
+              <Title>Comments</Title>
+              <Divider />
+            </Col>
+            <Col xl={4} span={0}></Col>
+            <Col xl={20} span={24} style={{ padding: "30px" }}>
               {comments.length > 0 && <CommentList comments={comments} />}
               <Comment
                 avatar={
@@ -379,6 +444,7 @@ class PostScreen extends React.Component {
                   />
                 }
               />
+
               <Drawer
                 width={640}
                 placement="right"
@@ -458,8 +524,9 @@ class PostScreen extends React.Component {
                   </Col>
                 </Row>
               </Drawer>
-            </div>
-          </div>
+            </Col>
+            <Col xl={4} span={0}></Col>
+          </Row>
         ) : null}
       </div>
     );
