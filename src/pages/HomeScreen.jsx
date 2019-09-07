@@ -1,6 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Pagination, Card, Icon, Avatar, Modal, Button } from "antd";
+import {
+  Pagination,
+  Card,
+  Icon,
+  Avatar,
+  Modal,
+  Button,
+  Statistic,
+  Row,
+  Col
+} from "antd";
 const { Meta } = Card;
 
 class HomeScreen extends React.Component {
@@ -12,7 +22,7 @@ class HomeScreen extends React.Component {
     categories: "all",
     color: "all",
     pageNumber: 1,
-    pageSize: 12,
+    pageSize: 32,
     total: 0,
     data: []
   };
@@ -218,12 +228,11 @@ class HomeScreen extends React.Component {
       });
   };
 
-  //<div className="row" style={{}}> can them
   render() {
     return (
       <div className="content">
-        <div className="row" style={{}}>
-          <div className="col-lg-3 col-md-6 col-12">
+        <Row type="flex" justify="space-around">
+          <Col xl={5} md={10} span={22}>
             {this.state.data.map((post, index) => {
               if (index % 4 === 0) {
                 let tmp = "/posts/" + post._id;
@@ -232,109 +241,7 @@ class HomeScreen extends React.Component {
                   <Card
                     hoverable
                     id={post._id}
-                    style={{ margin: "auto", marginTop: "20px", padding: 0 }}
-                    cover={
-                      <img
-                        onClick={event => {
-                          this.handleOpenPost(event, index);
-                        }}
-                        alt="example"
-                        src={this.state.data[index].imageUrl}
-                      />
-                    }
-                    actions={[<Icon type="heart" key="favourite" />]}
-                  >
-                    <Meta
-                      style={{ width: "18rem", height: "auto" }}
-                      avatar={
-                        <Avatar src={this.state.data[index].author.avaUrl} />
-                      }
-                      title={`${this.state.data[index].author.fullName}`}
-                      description={`${this.state.data[index].content}`}
-                    />
-                  </Card>
-                );
-              }
-            })}
-          </div>
-          <div className="col-lg-3 col-md-6 col-12">
-            {this.state.data.map((post, index) => {
-              if (index % 4 === 2) {
-                let tmp = "/posts/" + post._id;
-                console.log(tmp);
-                return (
-                  <Card
-                    hoverable
-                    id={post._id}
-                    style={{ margin: "auto", marginTop: "20px", padding: 0 }}
-                    cover={
-                      <img
-                        onClick={event => {
-                          this.handleOpenPost(event, index);
-                        }}
-                        alt="example"
-                        src={this.state.data[index].imageUrl}
-                      />
-                    }
-                    actions={[<Icon type="heart" key="favourite" />]}
-                  >
-                    <Meta
-                      style={{ width: "18rem", height: "auto" }}
-                      avatar={
-                        <Avatar src={this.state.data[index].author.avaUrl} />
-                      }
-                      title={`${this.state.data[index].author.fullName}`}
-                      description={`${this.state.data[index].content}`}
-                    />
-                  </Card>
-                );
-              }
-            })}
-          </div>
-          <div className="col-lg-3 col-md-6 col-12">
-            {this.state.data.map((post, index) => {
-              if (index % 4 === 1) {
-                let tmp = "/posts/" + post._id;
-                console.log(tmp);
-                return (
-                  <Card
-                    id={post._id}
-                    hoverable
-                    style={{ margin: "auto", marginTop: "20px", padding: 0 }}
-                    cover={
-                      <img
-                        onClick={event => {
-                          this.handleOpenPost(event, index);
-                        }}
-                        alt="example"
-                        src={this.state.data[index].imageUrl}
-                      />
-                    }
-                    actions={[<Icon type="heart" key="favourite" />]}
-                  >
-                    <Meta
-                      style={{ width: "18rem", height: "auto" }}
-                      avatar={
-                        <Avatar src={this.state.data[index].author.avaUrl} />
-                      }
-                      title={`${this.state.data[index].author.fullName}`}
-                      description={`${this.state.data[index].content}`}
-                    />
-                  </Card>
-                );
-              }
-            })}
-          </div>
-          <div className="col-lg-3 col-md-6 col-12">
-            {this.state.data.map((post, index) => {
-              if (index % 4 === 3) {
-                let tmp = "/posts/" + post._id;
-                console.log(tmp);
-                return (
-                  <Card
-                    hoverable
-                    id={post._id}
-                    style={{ margin: "auto", marginTop: "20px", padding: 0 }}
+                    style={{ margin: "0", marginTop: "40px", padding: 0 }}
                     cover={
                       <img
                         onClick={event => {
@@ -345,8 +252,21 @@ class HomeScreen extends React.Component {
                       />
                     }
                     actions={[
-                      <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" key="favourite" />,
-              
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.views}
+                        prefix={<Icon type="eye" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.comment}
+                        prefix={<Icon type="message" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.sold}
+                        prefix={<Icon type="shopping-cart" />}
+                      />
                     ]}
                   >
                     <Meta
@@ -361,23 +281,180 @@ class HomeScreen extends React.Component {
                 );
               }
             })}
-          </div>
-        </div>
+          </Col>
+          <Col xl={5} md={10} span={22}>
+            {this.state.data.map((post, index) => {
+              if (index % 4 === 1) {
+                let tmp = "/posts/" + post._id;
+                console.log(tmp);
+                return (
+                  <Card
+                    hoverable
+                    id={post._id}
+                    style={{ margin: "0", marginTop: "40px", padding: 0 }}
+                    cover={
+                      <img
+                        onClick={event => {
+                          this.handleOpenPost(event, index);
+                        }}
+                        alt="example"
+                        src={this.state.data[index].imageUrl}
+                      />
+                    }
+                    actions={[
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.views}
+                        prefix={<Icon type="eye" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.comment}
+                        prefix={<Icon type="message" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.sold}
+                        prefix={<Icon type="shopping-cart" />}
+                      />
+                    ]}
+                  >
+                    <Meta
+                      style={{ width: "18rem", height: "auto" }}
+                      avatar={
+                        <Avatar src={this.state.data[index].author.avaUrl} />
+                      }
+                      title={`${this.state.data[index].author.fullName}`}
+                      description={`${this.state.data[index].content}`}
+                    />
+                  </Card>
+                );
+              }
+            })}
+          </Col>
+          <Col xl={5} md={10} span={22}>
+            {this.state.data.map((post, index) => {
+              if (index % 4 === 2) {
+                let tmp = "/posts/" + post._id;
+                console.log(tmp);
+                return (
+                  <Card
+                    hoverable
+                    id={post._id}
+                    style={{ margin: "0", marginTop: "40px", padding: 0 }}
+                    cover={
+                      <img
+                        onClick={event => {
+                          this.handleOpenPost(event, index);
+                        }}
+                        alt="example"
+                        src={this.state.data[index].imageUrl}
+                      />
+                    }
+                    actions={[
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.views}
+                        prefix={<Icon type="eye" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.comment}
+                        prefix={<Icon type="message" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.sold}
+                        prefix={<Icon type="shopping-cart" />}
+                      />
+                    ]}
+                  >
+                    <Meta
+                      style={{ width: "18rem", height: "auto" }}
+                      avatar={
+                        <Avatar src={this.state.data[index].author.avaUrl} />
+                      }
+                      title={`${this.state.data[index].author.fullName}`}
+                      description={`${this.state.data[index].content}`}
+                    />
+                  </Card>
+                );
+              }
+            })}
+          </Col>
+          <Col xl={5} md={10} span={22}>
+            {this.state.data.map((post, index) => {
+              if (index % 4 === 3) {
+                let tmp = "/posts/" + post._id;
+                console.log(tmp);
+                return (
+                  <Card
+                    hoverable
+                    id={post._id}
+                    style={{ margin: "0", marginTop: "40px", padding: 0 }}
+                    cover={
+                      <img
+                        onClick={event => {
+                          this.handleOpenPost(event, index);
+                        }}
+                        alt="example"
+                        src={this.state.data[index].imageUrl}
+                      />
+                    }
+                    actions={[
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.views}
+                        prefix={<Icon type="eye" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.comment}
+                        prefix={<Icon type="message" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.sold}
+                        prefix={<Icon type="shopping-cart" />}
+                      />
+                    ]}
+                  >
+                    <Meta
+                      style={{ width: "18rem", height: "auto" }}
+                      avatar={
+                        <Avatar src={this.state.data[index].author.avaUrl} />
+                      }
+                      title={`${this.state.data[index].author.fullName}`}
+                      description={`${this.state.data[index].content}`}
+                    />
+                  </Card>
+                );
+              }
+            })}
+          </Col>
+        </Row>
 
-        <Pagination
-          className="row"
-          total={Math.ceil(this.state.total / this.state.pageSize) * 10}
-          onClick={this.handlePaginationClick}
-          itemRender={(current, type, originalElement) => {
-            if (type === "prev") {
-              return <a onClick={this.handlePreviousPage}>Previous</a>;
-            }
-            if (type === "next") {
-              return <a onClick={this.handleNextPage}>Next</a>;
-            }
-            return originalElement;
-          }}
-        />
+        {this.state.data.length != 0 ? (
+          <Row>
+            <Pagination
+              total={Math.ceil(this.state.total / this.state.pageSize) * 10}
+              onClick={this.handlePaginationClick}
+              itemRender={(current, type, originalElement) => {
+                if (type === "prev") {
+                  return <a onClick={this.handlePreviousPage}>Previous</a>;
+                }
+                if (type === "next") {
+                  return <a onClick={this.handleNextPage}>Next</a>;
+                }
+                return originalElement;
+              }}
+            />
+          </Row>
+        ) : (
+          <Row>
+            <p>NO DATA</p>
+          </Row>
+        )}
       </div>
     );
   }

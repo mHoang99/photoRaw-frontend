@@ -1,7 +1,7 @@
 import React, { useImperativeHandle } from 'react';
 import './App.css';
 import { BrowserRouter, Route, NavLink } from 'react-router-dom';
-import { Layout, Icon, Menu, Button, Input, Drawer, message } from 'antd';
+import { Layout, Icon, Menu, Button, Input, Drawer, message, Row, Col } from 'antd';
 import 'antd/dist/antd.css';
 import HomeScreen from './pages/HomeScreen';
 import Categories from './pages/Categories';
@@ -88,11 +88,11 @@ class App extends React.Component {
     window.location.href = `http://localhost:3000/categories/${event.item.props.children}&${this.state.color}`;
   };
 
-  selectColor = (event) => {
+  selectColor = (event, color) => {
     this.setState({
-      color: event.item.props.children
+      color: color
     })
-    window.location.href = `http://localhost:3000/categories/${this.state.categories}&${event.item.props.children}`;
+    window.location.href = `http://localhost:3000/categories/${this.state.categories}&${color}`;
   }
 
   onChange = e => {
@@ -202,7 +202,7 @@ class App extends React.Component {
                     </span>
                   }
                 >
-                  <Menu.Item key="3" onClick={()=>{window.location.href="http://localhost:3000/profile";}}>Info</Menu.Item>
+                  <Menu.Item key="3" onClick={() => { window.location.href = "http://localhost:3000/profile"; }}>Info</Menu.Item>
                   <Menu.Item key="4" onClick={this.handleLogOut}>Logout</Menu.Item>
                 </SubMenu> : null
               }
@@ -210,11 +210,27 @@ class App extends React.Component {
           </Sider>
 
           <Layout>
-            <Header className="row" style={{ background: '#fff', padding: 0, justifyContent: "flex-end" }}>
-              <BrowserRouter>
-                <Route path='/' exact={true} component={Post} />
-                <Route path='/categories' component={Post} />
-              </BrowserRouter>
+            <Header style={{ background: '#fff', padding: 0 }}>
+              <Row>
+                <Col span={18} >
+                  <Row type="flex" justify="start">
+                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "red")}} style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#e81515", borderStyle: "solid"}} />
+                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "yellow")}} value="yellow" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#ebeb46" }} />
+                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "green")}} value="green" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#59eb46" }} />
+                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "blue")}} value="blue" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#46c2eb" }} />
+                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "purple")}} value="purple" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#b446eb" }} />
+                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "pink")}} value="pink" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#eb46db" }} />
+                  </Row>
+                </Col>
+                <Col span={6}>
+                  <Row type="flex" justify="end">
+                    <BrowserRouter>
+                      <Route path='/' exact={true} component={Post} />
+                      <Route path='/categories' component={Post} />
+                    </BrowserRouter>
+                  </Row>
+                </Col>
+              </Row>
             </Header>
             <Content style={{ marginLeft: '10px', marginRight: '10px' }} className="row">
               <BrowserRouter>
@@ -223,8 +239,8 @@ class App extends React.Component {
                 <Route path='/categories' component={Categories} />
                 <Route path='/sign-up' exact={true} component={SignUp} />
                 <Route path='/login' exact={true} component={SignIn} />
-                <Route path='/profile' component={Profile}/>
-                <Route path='/id' component={AuthorPost}/>
+                <Route path='/profile' component={Profile} />
+                <Route path='/id' component={AuthorPost} />
               </BrowserRouter>
             </Content>
             <Footer style={{ textAlign: 'center' }}>PixieRaw ©2019</Footer>

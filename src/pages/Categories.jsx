@@ -1,5 +1,15 @@
 import React from "react";
-import { Pagination, Card, Icon, Avatar, Modal, Button } from "antd";
+import {
+  Pagination,
+  Card,
+  Icon,
+  Avatar,
+  Modal,
+  Button,
+  Row,
+  Col,
+  Statistic
+} from "antd";
 const { Meta } = Card;
 
 class Categories extends React.Component {
@@ -15,7 +25,7 @@ class Categories extends React.Component {
       .split("/")
       [window.location.href.split("/").length - 1].split("&")[1],
     pageNumber: 1,
-    pageSize: 12,
+    pageSize: 32,
     total: 0,
     data: []
   };
@@ -222,28 +232,42 @@ class Categories extends React.Component {
   render() {
     return (
       <div className="content">
-        <div className="row" style={{}}>
-          <div className="col-lg-3 col-md-6 col-12">
+        <Row type="flex" justify="space-around">
+          <Col xl={5} md={10} span={22}>
             {this.state.data.map((post, index) => {
               if (index % 4 === 0) {
+                let tmp = "/posts/" + post._id;
+                console.log(tmp);
                 return (
                   <Card
                     hoverable
-                    onClick={event => {
-                      this.handleOpenPost(event, index);
-                    }}
-                    style={{ margin: "auto", marginTop: "20px", padding: 0 }}
-                    //style={{ width: 300 }}
+                    id={post._id}
+                    style={{ margin: "0", marginTop: "20px", padding: 0 }}
                     cover={
                       <img
+                        onClick={event => {
+                          this.handleOpenPost(event, index);
+                        }}
                         alt="example"
                         src={this.state.data[index].imageUrl}
                       />
                     }
                     actions={[
-                      <Icon type="setting" key="setting" />,
-                      <Icon type="edit" key="edit" />,
-                      <Icon type="ellipsis" key="ellipsis" />
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.views}
+                        prefix={<Icon type="eye" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.comment}
+                        prefix={<Icon type="message" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.sold}
+                        prefix={<Icon type="shopping-cart" />}
+                      />
                     ]}
                   >
                     <Meta
@@ -258,64 +282,42 @@ class Categories extends React.Component {
                 );
               }
             })}
-          </div>
-          <div className="col-lg-3 col-md-6 col-12">
-            {this.state.data.map((post, index) => {
-              if (index % 4 === 2) {
-                return (
-                  <Card
-                    hoverable
-                    onClick={event => {
-                      this.handleOpenPost(event, index);
-                    }}
-                    style={{ margin: "auto", marginTop: "20px", padding: 0 }}
-                    //style={{ width: 300 }}
-                    cover={
-                      <img
-                        alt="example"
-                        src={this.state.data[index].imageUrl}
-                      />
-                    }
-                    actions={[
-                      <Icon type="setting" key="setting" />,
-                      <Icon type="edit" key="edit" />,
-                      <Icon type="ellipsis" key="ellipsis" />
-                    ]}
-                  >
-                    <Meta
-                      style={{ width: "18rem", height: "auto" }}
-                      avatar={
-                        <Avatar src={this.state.data[index].author.avaUrl} />
-                      }
-                      title={`${this.state.data[index].author.fullName}`}
-                      description={`${this.state.data[index].content}`}
-                    />
-                  </Card>
-                );
-              }
-            })}
-          </div>
-          <div className="col-lg-3 col-md-6 col-12">
+          </Col>
+          <Col xl={5} md={10} span={22}>
             {this.state.data.map((post, index) => {
               if (index % 4 === 1) {
+                let tmp = "/posts/" + post._id;
+                console.log(tmp);
                 return (
                   <Card
                     hoverable
-                    onClick={event => {
-                      this.handleOpenPost(event, index);
-                    }}
-                    style={{ margin: "auto", marginTop: "20px", padding: 0 }}
-                    //style={{ width: 300 }}
+                    id={post._id}
+                    style={{ margin: "0", marginTop: "20px", padding: 0 }}
                     cover={
                       <img
+                        onClick={event => {
+                          this.handleOpenPost(event, index);
+                        }}
                         alt="example"
                         src={this.state.data[index].imageUrl}
                       />
                     }
                     actions={[
-                      <Icon type="setting" key="setting" />,
-                      <Icon type="edit" key="edit" />,
-                      <Icon type="ellipsis" key="ellipsis" />
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.views}
+                        prefix={<Icon type="eye" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.comment}
+                        prefix={<Icon type="message" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.sold}
+                        prefix={<Icon type="shopping-cart" />}
+                      />
                     ]}
                   >
                     <Meta
@@ -330,27 +332,92 @@ class Categories extends React.Component {
                 );
               }
             })}
-          </div>
-          <div className="col-lg-3 col-md-6 col-12">
+          </Col>
+          <Col xl={5} md={10} span={22}>
+            {this.state.data.map((post, index) => {
+              if (index % 4 === 2) {
+                let tmp = "/posts/" + post._id;
+                console.log(tmp);
+                return (
+                  <Card
+                    hoverable
+                    id={post._id}
+                    style={{ margin: "0", marginTop: "20px", padding: 0 }}
+                    cover={
+                      <img
+                        onClick={event => {
+                          this.handleOpenPost(event, index);
+                        }}
+                        alt="example"
+                        src={this.state.data[index].imageUrl}
+                      />
+                    }
+                    actions={[
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.views}
+                        prefix={<Icon type="eye" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.comment}
+                        prefix={<Icon type="message" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.sold}
+                        prefix={<Icon type="shopping-cart" />}
+                      />
+                    ]}
+                  >
+                    <Meta
+                      style={{ width: "18rem", height: "auto" }}
+                      avatar={
+                        <Avatar src={this.state.data[index].author.avaUrl} />
+                      }
+                      title={`${this.state.data[index].author.fullName}`}
+                      description={`${this.state.data[index].content}`}
+                    />
+                  </Card>
+                );
+              }
+            })}
+          </Col>
+          <Col xl={5} md={10} span={22}>
             {this.state.data.map((post, index) => {
               if (index % 4 === 3) {
+                let tmp = "/posts/" + post._id;
+                console.log(tmp);
                 return (
                   <Card
                     hoverable
-                    onClick={event => {
-                      this.handleOpenPost(event, index);
-                    }}
-                    style={{ margin: "auto", marginTop: "20px", padding: 0 }}
+                    id={post._id}
+                    style={{ margin: "0", marginTop: "20px", padding: 0 }}
                     cover={
                       <img
+                        onClick={event => {
+                          this.handleOpenPost(event, index);
+                        }}
                         alt="example"
                         src={this.state.data[index].imageUrl}
                       />
                     }
                     actions={[
-                      <Icon type="setting" key="setting" />,
-                      <Icon type="edit" key="edit" />,
-                      <Icon type="ellipsis" key="ellipsis" />
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.views}
+                        prefix={<Icon type="eye" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.comment}
+                        prefix={<Icon type="message" />}
+                      />,
+                      <Statistic
+                        valueStyle={{ fontSize: "16px" }}
+                        value={post.sold}
+                        prefix={<Icon type="shopping-cart" />}
+                      />
                     ]}
                   >
                     <Meta
@@ -365,23 +432,30 @@ class Categories extends React.Component {
                 );
               }
             })}
-          </div>
-        </div>
+          </Col>
+        </Row>
 
-        <Pagination
-          className="row"
-          total={Math.ceil(this.state.total / this.state.pageSize) * 10}
-          onClick={this.handlePaginationClick}
-          itemRender={(current, type, originalElement) => {
-            if (type === "prev") {
-              return <a onClick={this.handlePreviousPage}>Previous</a>;
-            }
-            if (type === "next") {
-              return <a onClick={this.handleNextPage}>Next</a>;
-            }
-            return originalElement;
-          }}
-        />
+        {this.state.data.length != 0 ? (
+          <Row>
+            <Pagination
+              total={Math.ceil(this.state.total / this.state.pageSize) * 10}
+              onClick={this.handlePaginationClick}
+              itemRender={(current, type, originalElement) => {
+                if (type === "prev") {
+                  return <a onClick={this.handlePreviousPage}>Previous</a>;
+                }
+                if (type === "next") {
+                  return <a onClick={this.handleNextPage}>Next</a>;
+                }
+                return originalElement;
+              }}
+            />
+          </Row>
+        ) : (
+          <Row>
+            <p>NO DATA</p>
+          </Row>
+        )}
       </div>
     );
   }
