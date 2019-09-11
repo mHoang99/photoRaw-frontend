@@ -7,7 +7,8 @@ import {
   message,
   Icon,
   Form,
-  Select
+  Select,
+  Meta
 } from "antd";
 
 const { TextArea } = Input;
@@ -37,15 +38,27 @@ const children = [];
   children.push(<Option key="Architecture">Architecture</Option>);
 }
 
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
+// function getBase64(img, callback) {
+//   const reader = new FileReader();
+//   reader.addEventListener("load", () => callback(reader.result));
+//   reader.readAsDataURL(img);
+// }
+
+function getBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
 }
+
+var file = [];
+var check = true;
 
 const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
   // eslint-disable-next-line
-  class extends React.Component {
+  class Collection extends React.Component {
     state = {
       currentUser: {},
       imgSrc: "",
@@ -57,7 +70,11 @@ const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
       visible: false,
       confirmLoading: false,
       genreArray: [],
-      loading: false
+      loading: false,
+      previewVisible: false,
+      previewImage: "",
+      fileList: [],
+      check: true
     };
 
     componentWillMount() {
@@ -129,30 +146,44 @@ const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
       const isJpgOrPng =
         file.type === "image/jpeg" || file.type === "image/png";
       if (!isJpgOrPng) {
-        message.error("You can only upload JPG/PNG file!");
+        message.error("You can only upload JPG/JPEG/PNG file!");
+        check = false;
+      } else {
+        check =true;
+        console.log(file);
+        this.setState({
+          imageFile: file
+        });
       }
-      console.log(file);
-      this.setState({
-        imageFile: file
-      });
       return isJpgOrPng;
     };
 
-    handleChange = info => {
-      if (info.file.status === "uploading") {
-        this.setState({ loading: true });
-        return;
+    handlePreview = async file => {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj);
       }
-      if (info.file.status === "done") {
-        // Get this url from response in real world.
-        getBase64(info.file.originFileObj, imageUrl =>
-          this.setState({
-            imageUrl,
-            loading: false
-          })
-        );
-      }
+
+      this.setState({
+        previewImage: file.url || file.preview,
+        previewVisible: true
+      });
     };
+
+    // handleChange = info => {
+    //   if (info.file.status === "uploading") {
+    //     this.setState({ loading: true });
+    //     return;
+    //   }
+    //   if (info.file.status === "done") {
+    //     // Get this url from response in real world.
+    //     getBase64(info.file.originFileObj, imageUrl =>
+    //       this.setState({
+    //         imageUrl,
+    //         loading: false
+    //       })
+    //     );
+    //   }
+    // };
 
     handleChangeCategories = value => {
       this.setState({
@@ -160,17 +191,31 @@ const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
       });
     };
 
+    handleCancel = () => this.setState({ previewVisible: false });
+
+    handleChange = ({ fileList }) => {
+      if (check) {
+        file = fileList;
+        this.setState({ fileList });
+      } else {
+        file = [];
+        this.setState({ fileList: []});
+      }
+    };
+
     render() {
+      const { previewVisible, previewImage, fileList } = this.state;
       console.log(this.state.categories);
       const uploadButton = (
         <div>
-          <Icon type={this.state.loading ? "loading" : "plus"} />
+          <Icon type="plus" />
           <div className="ant-upload-text">Upload</div>
         </div>
       );
       const { imageUrl } = this.state;
       const { visible, onCancel, onCreate, form } = this.props;
       const { getFieldDecorator } = form;
+      console.log(fileList);
       return (
         <Modal
           visible={visible}
@@ -189,16 +234,20 @@ const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
                   }
                 ]
               })(
-                <Upload
-                  name="avatar"
-                  listType="picture-card"
-                  className="avatar-uploader"
-                  showUploadList={false}
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  beforeUpload={this.beforeUpload}
-                  onChange={this.handleChange}
-                >
-                  {imageUrl ? (
+                <div>
+                  <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader"
+                    fileList={fileList}
+                    //showUploadList={false}
+                    onPreview={this.handlePreview}
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    beforeUpload={this.beforeUpload}
+                    onChange={this.handleChange}
+                  >
+                    {fileList.length >= 1 ? null : uploadButton}
+                    {/* {imageUrl ? (
                     <img
                       src={imageUrl}
                       alt="avatar"
@@ -206,8 +255,20 @@ const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
                     />
                   ) : (
                     uploadButton
-                  )}
-                </Upload>
+                  )} */}
+                  </Upload>
+                  <Modal
+                    visible={previewVisible}
+                    footer={null}
+                    onCancel={this.handleCancel}
+                  >
+                    <img
+                      alt="example"
+                      style={{ width: "100%" }}
+                      src={previewImage}
+                    />
+                  </Modal>
+                </div>
               )}
             </Form.Item>
             <Form.Item label="Title">
@@ -231,8 +292,8 @@ const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
               })(
                 <TextArea
                   onChange={this.onChange}
-                  placeholder="Controlled autosize"
-                  autosize={{ minRows: 3, maxRows: 5 }}
+                  placeholder="Your story"
+                  autosize={{ minRows: 3 }}
                 />
               )}
             </Form.Item>
@@ -275,6 +336,8 @@ const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
 
 class Post extends React.Component {
   state = {
+    previewVisible: false,
+    previewImage: "",
     currentUser: {},
     imgSrc: "",
     imgFile: "",
@@ -369,7 +432,7 @@ class Post extends React.Component {
       }
       console.log(values);
       const formData = new FormData();
-      formData.append("image", values.photo.file.originFileObj);
+      formData.append("image", file[0].originFileObj);
       fetch("http://localhost:3001/upload/image", {
         method: "POST",
         credentials: "include",
@@ -392,6 +455,7 @@ class Post extends React.Component {
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
+              title: values.title,
               content: values.description,
               imageUrl: data2.data.imageUrl,
               price: values.price,
@@ -405,20 +469,6 @@ class Post extends React.Component {
               if (data.success) {
                 console.log(data.data._id);
                 let id = data.data._id;
-                fetch(`http://localhost:3001/posts/get/${id}`, {
-                  method: "GET",
-                  credentials: "include"
-                })
-                  .then(res1 => {
-                    return res1.json();
-                  })
-                  .then(data1 => {})
-                  .catch(err => {
-                    if (err) {
-                      console.log(err);
-                      window.alert(err.message);
-                    }
-                  });
               }
             })
             .catch(error => {
@@ -451,43 +501,17 @@ class Post extends React.Component {
     this.formRef = formRef;
   };
 
-  handleImageChange = event => {
-    const imageFile = event.target.files[0];
-
-    if (imageFile) {
-      const fileReader = new FileReader();
-
-      fileReader.readAsDataURL(imageFile);
-      fileReader.onloadend = data => {
-        this.setState({
-          imgSrc: data.currentTarget.result,
-          imgFile: imageFile
-        });
-      };
-      console.log(imageFile, this.state.imgFile);
-    }
-  };
-
   showModal = () => {
     this.setState({
       visible: true
     });
   };
 
-  /*handleCreate = () => {
-    
-    
-  };*/
-
   handleCancel = () => {
     console.log("Clicked cancel button");
     this.setState({
       visible: false
     });
-  };
-
-  onChange = value => {
-    console.log("changed", value);
   };
 
   onTick = event => {
@@ -514,7 +538,7 @@ class Post extends React.Component {
     return (
       <div>
         <Button
-          type="primary"
+          type="dashed"
           onClick={this.showModal}
           style={{ marginTop: "15px", marginRight: "30px" }}
         >
@@ -532,137 +556,3 @@ class Post extends React.Component {
 }
 
 export default Post;
-
-/*<form>
-            <div className="form-group">
-              <label for="recipient-name" className="col-form-label">
-                Author
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                disabled
-                id="recipient-name"
-                value={this.state.currentUser.fullName}
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="exampleFormControlFile1">Photo</label>
-              <input
-                onChange={this.handleImageChange}
-                type="file"
-                className="form-control-file"
-                id="exampleFormControlFile1"
-              />
-            </div>
-            {this.state.imgSrc ? (
-              <div>
-                <img
-                  src={this.state.imgSrc}
-                  style={{
-                    width: "100%"
-                  }}
-                />
-              </div>
-            ) : null}
-
-            <div className="form-group">
-              <label for="message-text" className="col-form-label">
-                Your story
-              </label>
-              <textarea
-                className="form-control"
-                id="message-text"
-                placeholder="Type here ..."
-                rows="8"
-                maxLength="500"
-              />
-            </div>
-
-            <div className="input-group mb-3">
-              <div className="input-group-prepend">
-                <span className="input-group-text">$</span>
-              </div>
-              <input
-                type="text"
-                className="form-control price"
-                aria-label="Amount (to the nearest dollar)"
-              />
-              <div className="input-group-append">
-                <span className="input-group-text">.00</span>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label for="message-text" className="col-form-label">
-                Categories
-              </label>
-              <div class="dropdown show">
-                <a
-                  class="btn btn-secondary dropdown-toggle"
-                  href="#"
-                  role="button"
-                  id="dropdownMenuLink"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  Dropdown link
-                </a>
-
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <ul>
-                    <input
-                      type="checkbox"
-                      name="Landscape"
-                      value="1"
-                      onChange={this.onTick}
-                    />
-                    Landscape
-                    <br />
-                    <input
-                      type="checkbox"
-                      name="Portrait"
-                      value="1"
-                      onChange={this.onTick}
-                    />
-                    Portrait
-                    <br />
-                    <input
-                      type="checkbox"
-                      name="Animals/Wildlife"
-                      value="1"
-                      onChange={this.onTick}
-                    />
-                    Animals/Wildlife
-                    <br />
-                    <input
-                      type="checkbox"
-                      name="Sports"
-                      value="1"
-                      onChange={this.onTick}
-                    />
-                    Sports
-                    <br />
-                    <input
-                      type="checkbox"
-                      name="Food and Drink"
-                      value="1"
-                      onChange={this.onTick}
-                    />
-                    Food and Drink
-                    <br />
-                    <input
-                      type="checkbox"
-                      name="Architecture"
-                      value="1"
-                      onChange={this.onTick}
-                    />
-                    Architecture
-                    <br />
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </form>*/

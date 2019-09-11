@@ -48,7 +48,7 @@ class HomeScreen extends React.Component {
       })
       .then(data => {
         if (!window.localStorage.getItem("email") && !data.data) {
-          this.props.history.push("login");
+          window.location.href = "http://localhost:3000/login";
         } else if (window.localStorage.getItem("email") && !data.data) {
           fetch("http://localhost:3001/users/resession", {
             credentials: "include",
@@ -229,10 +229,11 @@ class HomeScreen extends React.Component {
   };
 
   render() {
+    console.log(new Date());
     return (
       <div className="content">
         <Row type="flex" justify="space-around">
-          <Col xl={5} md={10} span={22}>
+          <Col xl={6} md={12} span={24} style={{ padding: "15px" }}>
             {this.state.data.map((post, index) => {
               if (index % 4 === 0) {
                 let tmp = "/posts/" + post._id;
@@ -282,7 +283,7 @@ class HomeScreen extends React.Component {
               }
             })}
           </Col>
-          <Col xl={5} md={10} span={22}>
+          <Col xl={6} md={12} span={24} style={{ padding: "15px" }}>
             {this.state.data.map((post, index) => {
               if (index % 4 === 1) {
                 let tmp = "/posts/" + post._id;
@@ -332,7 +333,7 @@ class HomeScreen extends React.Component {
               }
             })}
           </Col>
-          <Col xl={5} md={10} span={22}>
+          <Col xl={6} md={12} span={24} style={{ padding: "15px" }}>
             {this.state.data.map((post, index) => {
               if (index % 4 === 2) {
                 let tmp = "/posts/" + post._id;
@@ -382,7 +383,7 @@ class HomeScreen extends React.Component {
               }
             })}
           </Col>
-          <Col xl={5} md={10} span={22}>
+          <Col xl={6} md={12} span={24} style={{ padding: "15px" }}>
             {this.state.data.map((post, index) => {
               if (index % 4 === 3) {
                 let tmp = "/posts/" + post._id;
