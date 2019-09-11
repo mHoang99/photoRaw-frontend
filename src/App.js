@@ -4,11 +4,14 @@ import { BrowserRouter, Route, NavLink } from 'react-router-dom';
 import { Layout, Icon, Menu, Button, Input, Drawer, message, Row, Col } from 'antd';
 import 'antd/dist/antd.css';
 import HomeScreen from './pages/HomeScreen';
+import Searching from './pages/Search';
 import Categories from './pages/Categories';
 import PostScreen from './pages/PostScreen';
 import Profile from './pages/Profile';
 import AuthorPost from './pages/AuthorPost';
-
+import Success from './pages/Success';
+import SellScreen from './pages/SellScreen';
+import BoughtScreen from './pages/BoughtScreen';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp'
 import Post from './pages/Post';
@@ -187,8 +190,8 @@ class App extends React.Component {
                     </span>
                   }
                 >
-                  <Menu.Item key="6">Selling</Menu.Item>
-                  <Menu.Item key="8">Bought</Menu.Item>
+                  <Menu.Item key="6" onClick={() => { window.location.href = "http://localhost:3000/selling"; }}>Selling</Menu.Item>
+                  <Menu.Item key="8" onClick={() => { window.location.href = "http://localhost:3000/bought"; }}>Bought</Menu.Item>
                 </SubMenu> : null
               }
 
@@ -214,20 +217,20 @@ class App extends React.Component {
               <Row>
                 <Col span={18} >
                   <Row type="flex" justify="start">
-                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "red")}} style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#e81515", borderStyle: "solid"}} />
-                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "yellow")}} value="yellow" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#ebeb46" }} />
-                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "green")}} value="green" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#59eb46" }} />
-                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "blue")}} value="blue" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#46c2eb" }} />
-                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "purple")}} value="purple" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#b446eb" }} />
-                    <Button shape="circle" onClick={(event)=>{this.selectColor(event, "pink")}} value="pink" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#eb46db" }} />
+                    <Button shape="circle" onClick={(event) => { this.selectColor(event, "red") }} style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#e81515", borderStyle: "solid" }} />
+                    <Button shape="circle" onClick={(event) => { this.selectColor(event, "yellow") }} value="yellow" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#ebeb46" }} />
+                    <Button shape="circle" onClick={(event) => { this.selectColor(event, "green") }} value="green" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#59eb46" }} />
+                    <Button shape="circle" onClick={(event) => { this.selectColor(event, "blue") }} value="blue" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#46c2eb" }} />
+                    <Button shape="circle" onClick={(event) => { this.selectColor(event, "purple") }} value="purple" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#b446eb" }} />
+                    <Button shape="circle" onClick={(event) => { this.selectColor(event, "pink") }} value="pink" style={{ marginTop: "15px", marginLeft: "3%", backgroundColor: "#eb46db" }} />
                   </Row>
                 </Col>
                 <Col span={6}>
                   <Row type="flex" justify="end">
-                    <BrowserRouter>
-                      <Route path='/' exact={true} component={Post} />
-                      <Route path='/categories' component={Post} />
-                    </BrowserRouter>
+                    {this.state.logedin ? <BrowserRouter>
+                      <Route path='/' component={Post} />
+                    </BrowserRouter> : null}
+
                   </Row>
                 </Col>
               </Row>
@@ -241,6 +244,9 @@ class App extends React.Component {
                 <Route path='/login' exact={true} component={SignIn} />
                 <Route path='/profile' component={Profile} />
                 <Route path='/id' component={AuthorPost} />
+                <Route path='/success' component={Success} />
+                <Route path='/selling' component={SellScreen} />
+                <Route path='/bought' component={BoughtScreen} />
               </BrowserRouter>
             </Content>
             <Footer style={{ textAlign: 'center' }}>PixieRaw ©2019</Footer>
@@ -256,16 +262,9 @@ class App extends React.Component {
           getContainer={true}
           style={{}}
         >
-          <Search
-            placeholder="input search text"
-            onChange={(event) => {
-              this.setState({
-                searchValue: event.target.value,
-              })
-            }}
-            onSearch={value => console.log(this.state.searchValue)}
-            style={{ width: 200 }}
-          />
+          <BrowserRouter>
+            <Route path='/' component={Searching} />
+          </BrowserRouter>
         </Drawer>
 
       </div >

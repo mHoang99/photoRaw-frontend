@@ -19,7 +19,8 @@ import {
   Input,
   Form,
   Typography,
-  Statistic
+  Statistic,
+  Carousel
 } from "antd";
 const { Meta } = Card;
 const { TextArea } = Input;
@@ -97,7 +98,8 @@ class PostScreen extends React.Component {
     visible: false,
     comments: [],
     submitting: false,
-    value: ""
+    value: "",
+    data1: []
   };
 
   showDrawer = () => {
@@ -211,6 +213,37 @@ class PostScreen extends React.Component {
     this.pageRender();
   }
 
+  handleSubmitPay = event => {
+    event.preventDefault();
+
+    fetch(`http://localhost:3001/posts/pay`, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify({
+        price: this.state.data.price,
+        content: this.state.data.content,
+        id: this.state.data._id
+        // createdAt:  this.state.data.createdAt,
+      })
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(data => {
+        window.location.href = `${data.data}`;
+      })
+      .catch(err => {
+        if (err) {
+          console.log(err);
+          window.alert(err.message);
+        }
+      });
+  };
+
   componentDidMount() {
     fetch(`http://localhost:3001/posts/comment/${this.state.id}`, {
       method: "GET",
@@ -322,9 +355,35 @@ class PostScreen extends React.Component {
     const { comments, submitting, value } = this.state;
 
     console.log(this.state.data.author);
+    {
+      if (this.state.data1.length === 0 && this.state.data.author) {
+        console.log("here");
+        fetch(
+          `http://localhost:3001/posts/id?id=${this.state.data.author._id}&pageNumber=1
+      &pageSize=4`,
+          {
+            credentials: "include",
+            method: "GET"
+          }
+        )
+          .then(res => {
+            return res.json();
+          })
+          .then(data => {
+            console.log(data);
+            this.setState({ data1: data.data });
+          })
+          .catch(err => {
+            if (err) {
+              console.log(err);
+              window.alert(err.message);
+            }
+          });
+      }
+    }
 
     return (
-      <div className="container">
+      <h3 className="container">
         {this.state.data.author ? (
           <Row type="flex" justify="space-around" style={{ marginTop: "30px" }}>
             <Col xl={10} span={24} style={{ padding: "30px" }}>
@@ -342,14 +401,16 @@ class PostScreen extends React.Component {
                   />
                 </Col>
                 <Col span={12}>
-                  <form action="http://localhost:3001/pay" method="post">
-                    <input
-                      style={{ backgroundColor: "blue" }}
-                      type="submit"
-                      value="Paypal"
-                    />
-                  </form>
-                  <div id="paypal-button-container"></div>
+                  {this.state.currentUser.email !=
+                  this.state.data.author.email ? (
+                    <form onSubmit={this.handleSubmitPay}>
+                      <input
+                        style={{ backgroundColor: "blue" }}
+                        type="submit"
+                        value="Paypal"
+                      />
+                    </form>
+                  ) : null}
                 </Col>
               </Row>
             </Col>
@@ -414,6 +475,43 @@ class PostScreen extends React.Component {
                   />
                 </Col>
               </Row>
+            </Col>
+            <Col xl={4} span={0}></Col>
+
+            <Col
+              xl={20}
+              span={24}
+              style={{ paddingLeft: "30px", paddingRight: "30px" }}
+            >
+              {this.state.data1.length != 0 ? (
+                <Carousel
+                  autoplay
+                  style={{
+                    width: "100%",
+                    height: "400px",
+                    overflow: "hidden",
+                    border: "2px solid #ddd",
+                    borderRadius: "4px",
+                    // padding: "5px"
+                  }}
+                >
+                  {this.state.data1.map((post, index) => {
+                    return (
+                      <div>
+                        <img
+                          src={post.imageUrl}
+                          style={{
+                            // position: "absolute",
+                            width: "100%",
+                            height: "auto",
+                            transform: "translate(0%, -25%)"
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </Carousel>
+              ) : null}
             </Col>
             <Col xl={4} span={0}></Col>
 
@@ -528,7 +626,7 @@ class PostScreen extends React.Component {
             <Col xl={4} span={0}></Col>
           </Row>
         ) : null}
-      </div>
+      </h3>
     );
   }
 }
