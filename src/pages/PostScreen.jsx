@@ -150,7 +150,7 @@ class PostScreen extends React.Component {
         }
       });
 
-    fetch("http://localhost:3001/users/current", {
+    fetch("http://localhost:3001/users/currentFind", {
       credentials: "include",
       method: "GET"
     })
@@ -180,9 +180,7 @@ class PostScreen extends React.Component {
               console.log(data1.success);
               this.setState({
                 currentUser: {
-                  email: data1.data.email,
-                  fullName: data1.data.fullName,
-                  avaUrl: data1.data.avaUrl
+                  ...data1.data
                 }
               });
             })
@@ -195,9 +193,7 @@ class PostScreen extends React.Component {
         } else if (data.data) {
           this.setState({
             currentUser: {
-              email: data.data.email,
-              fullName: data.data.fullName,
-              avaUrl: data.data.avaUrl
+              ...data.data
             }
           });
           console.log("Logged in");
@@ -287,6 +283,29 @@ class PostScreen extends React.Component {
       .then(data => {
         console.log(data.data);
         this.setState({ data: data.data });
+        fetch(`http://localhost:3001/users/click-update`, {
+          credentials: "include",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            recommendColor: data.data.mainColor,
+            recommendCategory: data.data.categories
+          })
+        })
+          .then(res2 => {
+            return res2.json();
+          })
+          .then(data2 => {
+            console.log("success ", data2.success);
+          })
+          .catch(err2 => {
+            if (err2) {
+              console.log(err2);
+              window.alert(err2.message);
+            }
+          });
       })
       .catch(err => {
         if (err) {
@@ -351,9 +370,20 @@ class PostScreen extends React.Component {
     });
   };
 
+  checkOwned = () => {
+    let id = this.state.id;
+    if (
+      this.state.currentUser.bought.find(function(item) {
+        return item === id;
+      }) === id
+    ) {
+      return true;
+    } else return false;
+  };
+
   render() {
     const { comments, submitting, value } = this.state;
-
+    const id = this.state.id;
     console.log(this.state.data.author);
     {
       if (this.state.data1.length === 0 && this.state.data.author) {
@@ -402,7 +432,7 @@ class PostScreen extends React.Component {
                 </Col>
                 <Col span={12}>
                   {this.state.currentUser.email !=
-                  this.state.data.author.email ? (
+                    this.state.data.author.email && !this.checkOwned() ? (
                     <form onSubmit={this.handleSubmitPay}>
                       <input
                         style={{ backgroundColor: "blue" }}
@@ -410,6 +440,19 @@ class PostScreen extends React.Component {
                         value="Paypal"
                       />
                     </form>
+                  ) : this.checkOwned() ? (
+                    <h2>Owned</h2>
+                  ) : null}
+
+                  {this.state.currentUser.email ===
+                  this.state.data.author.email ? (
+                    <Statistic
+                      valueStyle={{ color: "#3f8600" }}
+                      precision={2}
+                      title="Income"
+                      value={this.state.data.price * this.state.data.sold}
+                      prefix={<Icon type="dollar" />}
+                    />
                   ) : null}
                 </Col>
               </Row>
@@ -421,16 +464,21 @@ class PostScreen extends React.Component {
             >
               <Row type="flex" justify="space-around">
                 <Typography
-                  style={{ backgroundColor: "#cad6eb", padding: "30px" }}
+                  style={{
+                    backgroundColor: "#cad6eb",
+                    padding: "30px",
+                    width: "100%"
+                  }}
                 >
-                  <Title>Title</Title>
+                  <Title style={{ width: "100%" }}>
+                    {this.state.data.title}
+                  </Title>
                   <Divider />
-                  <Paragraph>
-                    In the process of internal desktop applications development,
-                    many different design specs and implementations would be
-                    involved, which might cause designers and developers
-                    difficulties and duplication and reduce the efficiency of
-                    development.
+                  <Paragraph
+                    style={{ minHeight: "100px", width: "100%" }}
+                    ellipsis={{ rows: 3, expandable: true }}
+                  >
+                    {this.state.data.content}
                   </Paragraph>
                 </Typography>
               </Row>
@@ -491,7 +539,7 @@ class PostScreen extends React.Component {
                     height: "400px",
                     overflow: "hidden",
                     border: "2px solid #ddd",
-                    borderRadius: "4px",
+                    borderRadius: "4px"
                     // padding: "5px"
                   }}
                 >
