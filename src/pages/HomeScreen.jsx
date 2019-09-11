@@ -9,7 +9,8 @@ import {
   Button,
   Statistic,
   Row,
-  Col
+  Col,
+  Typography
 } from "antd";
 const { Meta } = Card;
 
@@ -271,12 +272,18 @@ class HomeScreen extends React.Component {
                     ]}
                   >
                     <Meta
-                      style={{ width: "18rem", height: "auto" }}
+                      style={{ width: "100%", height: "auto" }}
                       avatar={
                         <Avatar src={this.state.data[index].author.avaUrl} />
                       }
-                      title={`${this.state.data[index].author.fullName}`}
-                      description={`${this.state.data[index].content}`}
+                      title={`${this.state.data[index].title}`}
+                      description={
+                        <Typography.Paragraph
+                          ellipsis={{ rows: 2, expandable: false }}
+                        >
+                          {this.state.data[index].content}
+                        </Typography.Paragraph>
+                      }
                     />
                   </Card>
                 );
@@ -321,12 +328,18 @@ class HomeScreen extends React.Component {
                     ]}
                   >
                     <Meta
-                      style={{ width: "18rem", height: "auto" }}
+                      style={{ width: "100%", height: "auto" }}
                       avatar={
                         <Avatar src={this.state.data[index].author.avaUrl} />
                       }
-                      title={`${this.state.data[index].author.fullName}`}
-                      description={`${this.state.data[index].content}`}
+                      title={`${this.state.data[index].title}`}
+                      description={
+                        <Typography.Paragraph
+                          ellipsis={{ rows: 2, expandable: false }}
+                        >
+                          {this.state.data[index].content}
+                        </Typography.Paragraph>
+                      }
                     />
                   </Card>
                 );
@@ -371,12 +384,18 @@ class HomeScreen extends React.Component {
                     ]}
                   >
                     <Meta
-                      style={{ width: "18rem", height: "auto" }}
+                      style={{ width: "100%", height: "auto" }}
                       avatar={
                         <Avatar src={this.state.data[index].author.avaUrl} />
                       }
-                      title={`${this.state.data[index].author.fullName}`}
-                      description={`${this.state.data[index].content}`}
+                      title={`${this.state.data[index].title}`}
+                      description={
+                        <Typography.Paragraph
+                          ellipsis={{ rows: 2, expandable: false }}
+                        >
+                          {this.state.data[index].content}
+                        </Typography.Paragraph>
+                      }
                     />
                   </Card>
                 );
@@ -421,12 +440,18 @@ class HomeScreen extends React.Component {
                     ]}
                   >
                     <Meta
-                      style={{ width: "18rem", height: "auto" }}
+                      style={{ width: "100%", height: "auto" }}
                       avatar={
                         <Avatar src={this.state.data[index].author.avaUrl} />
                       }
-                      title={`${this.state.data[index].author.fullName}`}
-                      description={`${this.state.data[index].content}`}
+                      title={`${this.state.data[index].title}`}
+                      description={
+                        <Typography.Paragraph
+                          ellipsis={{ rows: 2, expandable: false }}
+                        >
+                          {this.state.data[index].content}
+                        </Typography.Paragraph>
+                      }
                     />
                   </Card>
                 );

@@ -6,64 +6,30 @@ import {
   Avatar,
   Modal,
   Button,
-  Col,
   Row,
+  Col,
   Statistic,
-  List,
-  Drawer,
-  Typography,
-  Divider,
+  Typography
 } from "antd";
 const { Meta } = Card;
-const { Title, Paragraph, Text } = Typography;
 
-const pStyle = {
-  fontSize: 16,
-  color: "rgba(0,0,0,0.85)",
-  lineHeight: "24px",
-  display: "block",
-  marginBottom: 16
-};
-
-const DescriptionItem = ({ title, content }) => (
-  <div
-    style={{
-      fontSize: 14,
-      lineHeight: "22px",
-      marginBottom: 7,
-      color: "rgba(0,0,0,0.65)"
-    }}
-  >
-    <p
-      style={{
-        marginRight: 8,
-        display: "inline-block",
-        color: "rgba(0,0,0,0.85)"
-      }}
-    >
-      {title}:
-    </p>
-    {content}
-  </div>
-);
-
-class AuthorPost extends React.Component {
+class Recommend extends React.Component {
   state = {
     currentUser: {},
     imgSrc: "",
     imgFile: "",
     errorMessage: "",
-    id: window.location.href
+    categories: window.location.href
       .split("/")
       [window.location.href.split("/").length - 1].split("&")[0],
+    color: window.location.href
+      .split("/")
+      [window.location.href.split("/").length - 1].split("&")[1],
     pageNumber: 1,
     pageSize: 32,
     total: 0,
-    data: [],
-    author: {},
-    visible: false
+    data: []
   };
-
   handleOpenPost = (event, index) => {
     event.preventDefault();
     console.log(index);
@@ -148,8 +114,7 @@ class AuthorPost extends React.Component {
     });
 
     fetch(
-      `http://localhost:3001/posts/id?id=${this.state.id}&pageNumber=${event.target.innerText}
-    &pageSize=${this.state.pageSize}`,
+      `http://localhost:3001/posts?categories=${this.state.categories}&color=${this.state.color}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
       {
         credentials: "include",
         method: "GET"
@@ -184,8 +149,7 @@ class AuthorPost extends React.Component {
       });
 
       fetch(
-        `http://localhost:3001/posts/id?id=${this.state.id}&pageNumber=${tmp}
-      &pageSize=${this.state.pageSize}`,
+        `http://localhost:3001/posts?categories=${this.state.categories}&color=${this.state.color}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
         {
           credentials: "include",
           method: "GET"
@@ -218,8 +182,8 @@ class AuthorPost extends React.Component {
       });
 
       fetch(
-        `http://localhost:3001/posts/id?id=${this.state.id}&pageNumber=${tmp}
-      &pageSize=${this.state.pageSize}`,
+        `http://localhost:3001/posts?categories=${this.state.categories}&color=${this.state.color}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
+
         {
           credentials: "include",
           method: "GET"
@@ -242,22 +206,10 @@ class AuthorPost extends React.Component {
     }
   };
 
-  showDrawer = () => {
-    this.setState({
-      visible: true
-    });
-  };
-
-  onClose = () => {
-    this.setState({
-      visible: false
-    });
-  };
-
   pageRender = () => {
     console.log(this.state.categories, this.state.color);
     fetch(
-      `http://localhost:3001/posts/id?id=${this.state.id}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
+      `http://localhost:3001/posts?categories=${this.state.categories}&color=${this.state.color}&pageNumber=${this.state.pageNumber}&pageSize=${this.state.pageSize}`,
       {
         method: "GET",
         credentials: "include"
@@ -268,11 +220,7 @@ class AuthorPost extends React.Component {
       })
       .then(data => {
         console.log(data);
-        this.setState({
-          total: data.total,
-          data: data.data,
-          author: data.data[0].author
-        });
+        this.setState({ total: data.total, data: data.data });
       })
       .catch(err => {
         if (err) {
@@ -285,115 +233,6 @@ class AuthorPost extends React.Component {
   render() {
     return (
       <div className="content">
-        {this.state.author ? (
-          <Row style={{padding: "30px"}}>
-            <Col style={{width: "400px"}}>
-              <List
-                dataSource={[
-                  {
-                    name: this.state.author.fullName
-                  }
-                ]}
-                bordered
-                renderItem={item => (
-                  <List.Item
-                    key={item.id}
-                    actions={[
-                      <a onClick={this.showDrawer} key={`a-${item.id}`}>
-                        View Profile
-                      </a>
-                    ]}
-                  >
-                    <List.Item.Meta
-                      avatar={<Avatar src={this.state.author.avaUrl} />}
-                      title={item.name}
-                      description="Photograper"
-                    />
-                  </List.Item>
-                )}
-              />
-              <Drawer
-                width={640}
-                placement="right"
-                closable={false}
-                onClose={this.onClose}
-                visible={this.state.visible}
-              >
-                <p style={{ ...pStyle, marginBottom: 24 }}>User Profile</p>
-                <p style={pStyle}>Personal</p>
-                <Row>
-                  <Col span={12}>
-                    <DescriptionItem
-                      title="Full Name"
-                      content={this.state.author.fullName}
-                    />{" "}
-                  </Col>
-                  <Col span={12}>
-                    <DescriptionItem
-                      title="Account"
-                      content={this.state.author.email}
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={12}>
-                    <DescriptionItem
-                      title="City"
-                      content={this.state.author.city}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DescriptionItem
-                      title="Country"
-                      content={this.state.author.country}
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={24}>
-                    <DescriptionItem
-                      title="Birthday"
-                      content={this.state.author.dateOfBirth}
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={24}>
-                    <DescriptionItem
-                      title="Message"
-                      content={this.state.author.message}
-                    />
-                  </Col>
-                </Row>
-                <Divider />
-
-                <p style={pStyle}>Contacts</p>
-                <Row>
-                  <Col span={12}>
-                    <DescriptionItem
-                      title="Email"
-                      content={this.state.author.email}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <DescriptionItem
-                      title="Phone Number"
-                      content={this.state.author.phoneNumber}
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={24}>
-                    <DescriptionItem
-                      title="Address"
-                      content={this.state.author.address}
-                    />
-                  </Col>
-                </Row>
-              </Drawer>
-            </Col>
-          </Row>
-        ) : null}
         <Row type="flex" justify="space-around">
           <Col xl={5} md={10} span={22}>
             {this.state.data.map((post, index) => {
@@ -619,4 +458,4 @@ class AuthorPost extends React.Component {
   }
 }
 
-export default AuthorPost;
+export default Recommend;
